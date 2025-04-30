@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_socketio import SocketIO, emit
 import threading
 import sqlite3
@@ -8,11 +8,15 @@ import eventlet
 eventlet.monkey_patch()
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 DB_PATH = "personel"
 TRIGGER_FILE = "trigger.txt"
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
 
 @app.route("/")
 def index():
@@ -23,7 +27,7 @@ def index():
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Welcome Portal</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+        <script src="/static/js/socket.io.min.js"></script>
         <style>
             * {
                 margin: 0;
@@ -150,7 +154,7 @@ def index():
         <div class="particles" id="particles"></div>
         <div class="container">
             <div class="header">
-                <h1>Welcome Portal</h1>
+                <h1>کرمان موتور</h1>
             </div>
             <ul class="welcome-messages" id="welcome-messages"></ul>
         </div>
@@ -183,7 +187,7 @@ def index():
                 
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'name';
-                nameDiv.innerHTML = `🎉 Welcome ${data.name} ${data.lastname}!`;
+                nameDiv.innerHTML = `🎉 ${data.name} ${data.lastname} خوش آمدید!`;
                 
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'time';
